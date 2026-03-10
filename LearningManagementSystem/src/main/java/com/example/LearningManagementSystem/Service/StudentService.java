@@ -5,7 +5,9 @@ import com.example.LearningManagementSystem.DTO.StudentProfileDTO;
 import com.example.LearningManagementSystem.Entity.Student;
 import com.example.LearningManagementSystem.Entity.StudentProfile;
 import com.example.LearningManagementSystem.Exception.StudentNotFoundException;
+import com.example.LearningManagementSystem.Notification.NotificationService;
 import com.example.LearningManagementSystem.Repository.StudentRepo;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,8 +16,11 @@ import java.util.List;
 @Service
 public class StudentService {
     private StudentRepo studentRepo;
-    public StudentService(StudentRepo studentRepo){
+    private NotificationService notificationService;
+    public StudentService(StudentRepo studentRepo,
+                          @Qualifier("emailNotificationService") NotificationService notificationService){
         this.studentRepo=studentRepo;
+        this.notificationService=notificationService;
     }
 
     public List<StudentProfileDTO> getAllStudents(){
@@ -44,6 +49,7 @@ public class StudentService {
     public StudentProfileDTO addStudent(Student student){
         StudentProfile studentProfile=student.getProfile();
         if(studentProfile!=null){
+            notificationService.Notify("Profile successfully created for:"+student.getEmail());
             studentProfile.setStudent(student);
         }
         Student savedStudent=studentRepo.save(student);
