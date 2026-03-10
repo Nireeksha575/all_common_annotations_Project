@@ -15,18 +15,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(StudentNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handelStudentNotFoundException(StudentNotFoundException exception){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(LocalDateTime.now(),"Student Not Found", exception.getMessage()));
-
-    }
-    @ExceptionHandler(ProfileAlreadySetException.class)
-    public ResponseEntity<ErrorResponse> handelProfileAlreadySetException(ProfileAlreadySetException exception){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(LocalDateTime.now(),"Profile already set exception", exception.getMessage()));
-
-    }
     private Map<String, Object> buildError(HttpStatus status, String message, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
@@ -35,6 +23,40 @@ public class GlobalExceptionHandler {
         body.put("message", message);
         body.put("path", request.getDescription(false).replace("uri=", ""));
         return body;
+    }
+    @ExceptionHandler(StudentNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handelStudentNotFoundException(StudentNotFoundException exception,WebRequest request){
+        return new ResponseEntity<>(buildError(HttpStatus.NOT_FOUND,
+                exception.getMessage(),request),HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler(ProfileAlreadySetException.class)
+    public ResponseEntity<Map<String, Object>> handelProfileAlreadySetException(ProfileAlreadySetException exception,WebRequest request){
+        return new ResponseEntity<>(buildError(HttpStatus.BAD_REQUEST,
+                exception.getMessage(),request),HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handelProfileNotFoundException(ProfileNotFoundException exception,WebRequest request){
+        return new ResponseEntity<>(buildError(HttpStatus.NOT_FOUND,
+                exception.getMessage(),request),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CourseMaterialNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handelCourseMaterialNotFoundException(
+            CourseMaterialNotFoundException exception,
+            WebRequest request
+    ){
+        return new ResponseEntity<>(buildError(HttpStatus.NOT_FOUND,
+                exception.getMessage(),request),HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handelCourseNotFoundException(CourseNotFoundException exception,WebRequest request){
+        return new ResponseEntity<>(buildError(HttpStatus.NOT_FOUND,exception.getMessage(),request),HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

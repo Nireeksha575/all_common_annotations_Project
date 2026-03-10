@@ -1,5 +1,6 @@
 package com.example.LearningManagementSystem.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.jspecify.annotations.NonNull;
 
@@ -19,6 +20,7 @@ public class Instructor {
     private String specialization;
     private short experienceYears;
     @OneToMany(mappedBy = "instructor")
+    @JsonIgnore
     private List<Course> courses;
 
     public @NonNull String getName() {
