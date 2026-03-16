@@ -1,6 +1,8 @@
 package com.example.LearningManagementSystem.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class CourseMaterial {
@@ -8,42 +10,27 @@ public class CourseMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @NotBlank(message = "Title is required")
+    @Size(max = 200, message = "Title cannot exceed 200 characters")
     private String title;
+
+    @NotBlank(message = "File URL is required")
     private String file_url;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-    public long getId() {
-        return id;
-    }
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getFile_url() { return file_url; }
+    public void setFile_url(String file_url) { this.file_url = file_url; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getFile_url() {
-        return file_url;
-    }
-
-    public void setFile_url(String file_url) {
-        this.file_url = file_url;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
+    public Course getCourse() { return course; }
+    public void setCourse(Course course) { this.course = course; }
 }

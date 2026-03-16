@@ -2,6 +2,7 @@ package com.example.LearningManagementSystem.Controller;
 
 import com.example.LearningManagementSystem.Entity.Course;
 import com.example.LearningManagementSystem.Service.CourseService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<Course> createCourse(
-            @RequestBody Course course,
+            @Valid @RequestBody Course course,
             @RequestParam Long instructorId,
             @RequestParam Long categoryId) {
         return new ResponseEntity<>(courseService.createCourse(course, instructorId, categoryId), HttpStatus.CREATED);
@@ -54,7 +55,7 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<Course> updateCourse(
             @PathVariable Long id,
-            @RequestBody Course course,
+            @Valid @RequestBody Course course,
             @RequestParam Long instructorId,
             @RequestParam Long categoryId) {
         return ResponseEntity.ok(courseService.updateCourse(id, course, instructorId, categoryId));

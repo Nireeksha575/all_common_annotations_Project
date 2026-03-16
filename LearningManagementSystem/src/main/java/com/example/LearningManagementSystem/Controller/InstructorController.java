@@ -2,6 +2,7 @@ package com.example.LearningManagementSystem.Controller;
 
 import com.example.LearningManagementSystem.Entity.Instructor;
 import com.example.LearningManagementSystem.Service.InstructorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,12 @@ public class InstructorController {
     }
 
     @PostMapping
-    public ResponseEntity<Instructor> createInstructor(@RequestBody Instructor instructor) {
+    public ResponseEntity<Instructor> createInstructor(@Valid @RequestBody Instructor instructor) {
         return new ResponseEntity<>(instructorService.createInstructor(instructor), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Instructor> updateInstructor(@PathVariable Long id, @RequestBody Instructor instructor) {
+    public ResponseEntity<Instructor> updateInstructor(@PathVariable Long id, @Valid @RequestBody Instructor instructor) {
         return ResponseEntity.ok(instructorService.updateInstructor(id, instructor));
     }
 
