@@ -9,40 +9,47 @@ import com.example.LearningManagementSystem.Repository.StudentProfileRepo;
 import com.example.LearningManagementSystem.Repository.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class StudentProfileService {
-    private StudentProfileRepo studentProfileRepo;
-    public StudentProfileService(StudentProfileRepo studentProfileRepo){
-        this.studentProfileRepo=studentProfileRepo;
+
+    private final StudentProfileRepo studentProfileRepo;
+
+    public StudentProfileService(StudentProfileRepo studentProfileRepo) {
+        this.studentProfileRepo = studentProfileRepo;
     }
+
     @Autowired
     private StudentRepo studentRepo;
 
-    public List<StudentProfile> getAllProfile(){
+    public List<StudentProfile> getAllProfile() {
         return studentProfileRepo.findAll();
     }
 
+    @Transactional
     public StudentProfile addProfile(StudentProfile studentProfile, long id) {
-        Student student= studentRepo.findById(id)
-                .orElseThrow(()-> new StudentNotFoundException("Student with id:"+id+" is not found"));
+        Student student = studentRepo.findById(id)
+                .orElseThrow(() -> new StudentNotFoundException("Student with id:" + id + " is not found"));
 
-        if(student.getProfile()!=null){
-            throw new ProfileAlreadySetException("Student with id:"+id+" has a profile");
+        if (student.getProfile() != null) {
+            throw new ProfileAlreadySetException("Student with id:" + id + " has a profile");
         }
-            student.setProfile(studentProfile);
-            studentProfile.setStudent(student);
-            Student updatedStudent=studentRepo.save(student);
-            return updatedStudent.getProfile();
+        student.setProfile(studentProfile);
+        studentProfile.setStudent(student);
+        Student updatedStudent = studentRepo.save(student);
+        return updatedStudent.getProfile();
     }
 
+    @Transactional
     public void deleteProfile(long id) {
-        StudentProfile profile=studentProfileRepo.findById(id)
-                .orElseThrow(()->new ProfileNotFoundException("Profile with id:"+id+" not found"));
-        Student student=profile.getStudent();
-        if(student!=null){
+        StudentProfile profile = studentProfileRepo.findById(id)
+                .orElseThrow(() -> new ProfileNotFoundException("Profile with id:" + id + " not found"));
+        Student student = profile.getStudent();
+        if (student != null) {
             student.setProfile(null);
         }
         studentProfileRepo.delete(profile);

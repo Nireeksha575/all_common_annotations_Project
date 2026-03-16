@@ -7,11 +7,13 @@ import com.example.LearningManagementSystem.Exception.DuplicateResourceException
 import com.example.LearningManagementSystem.Exception.ResourceNotFoundException;
 import com.example.LearningManagementSystem.Repository.CourseRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class CourseService {
 
     private final CourseRepo courseRepository;
@@ -47,6 +49,7 @@ public class CourseService {
         return courseRepository.findByCourseNameContainingIgnoreCase(keyword);
     }
 
+    @Transactional
     public Course createCourse(Course course, Long instructorId, Long categoryId) {
         if (courseRepository.existsByCourseName(course.getCourseName())) {
             throw new DuplicateResourceException("Course with name '" + course.getCourseName() + "' already exists.");
@@ -59,6 +62,7 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
+    @Transactional
     public Course updateCourse(Long id, Course updated, Long instructorId, Long categoryId) {
         Course existing = getCourseById(id);
         if (!existing.getCourseName().equals(updated.getCourseName())
@@ -74,6 +78,7 @@ public class CourseService {
         return courseRepository.save(existing);
     }
 
+    @Transactional
     public void deleteCourse(Long id) {
         getCourseById(id);
         courseRepository.deleteById(id);

@@ -8,11 +8,13 @@ import com.example.LearningManagementSystem.Exception.ResourceNotFoundException;
 import com.example.LearningManagementSystem.Repository.EnrollmentRepo;
 import com.example.LearningManagementSystem.Repository.StudentRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class EnrollmentService {
 
     private final EnrollmentRepo enrollmentRepository;
@@ -44,6 +46,7 @@ public class EnrollmentService {
         return enrollmentRepository.findByCourse_CourseId(courseId);
     }
 
+    @Transactional
     public Enrollment enroll(Long studentId, Long courseId) {
         if (enrollmentRepository.existsByStudent_StudentIdAndCourse_CourseId(studentId, courseId)) {
             throw new AlreadyEnrolledException("Student " + studentId + " is already enrolled in course " + courseId);
@@ -59,6 +62,7 @@ public class EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
+    @Transactional
     public void unenroll(Long enrollmentId) {
         getEnrollmentById(enrollmentId);
         enrollmentRepository.deleteById(enrollmentId);

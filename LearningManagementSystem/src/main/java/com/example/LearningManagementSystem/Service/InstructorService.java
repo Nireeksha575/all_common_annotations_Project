@@ -5,10 +5,12 @@ import com.example.LearningManagementSystem.Exception.DuplicateResourceException
 import com.example.LearningManagementSystem.Exception.ResourceNotFoundException;
 import com.example.LearningManagementSystem.Repository.InstructorRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class InstructorService {
 
     private final InstructorRepo instructorRepository;
@@ -26,6 +28,7 @@ public class InstructorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Instructor", id));
     }
 
+    @Transactional
     public Instructor createInstructor(Instructor instructor) {
         if (instructorRepository.existsByEmail(instructor.getEmail())) {
             throw new DuplicateResourceException("Instructor with email '" + instructor.getEmail() + "' already exists.");
@@ -33,9 +36,11 @@ public class InstructorService {
         return instructorRepository.save(instructor);
     }
 
+    @Transactional
     public Instructor updateInstructor(Long id, Instructor updated) {
         Instructor existing = getInstructorById(id);
-        if (!existing.getEmail().equals(updated.getEmail()) && instructorRepository.existsByEmail(updated.getEmail())) {
+        if (!existing.getEmail().equals(updated.getEmail()) &&
+                instructorRepository.existsByEmail(updated.getEmail())) {
             throw new DuplicateResourceException("Email '" + updated.getEmail() + "' is already in use.");
         }
         existing.setName(updated.getName());
@@ -46,6 +51,7 @@ public class InstructorService {
         return instructorRepository.save(existing);
     }
 
+    @Transactional
     public void deleteInstructor(Long id) {
         getInstructorById(id);
         instructorRepository.deleteById(id);
