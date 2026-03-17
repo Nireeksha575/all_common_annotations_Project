@@ -5,6 +5,7 @@ package com.example.LearningManagementSystem.Service;
 import com.example.LearningManagementSystem.DTO.StudentProfileDTO;
 import com.example.LearningManagementSystem.Entity.Student;
 import com.example.LearningManagementSystem.Entity.StudentProfile;
+import com.example.LearningManagementSystem.Event.StudentCreatedEvent;
 import com.example.LearningManagementSystem.Exception.StudentNotFoundException;
 import com.example.LearningManagementSystem.Notification.NotificationService;
 import com.example.LearningManagementSystem.Repository.StudentRepo;
@@ -13,6 +14,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -27,12 +29,12 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepo studentRepo;
-    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public StudentService(StudentRepo studentRepo,
-                          @Qualifier("emailNotificationService") NotificationService notificationService) {
+                          ApplicationEventPublisher eventPublisher) {
         this.studentRepo = studentRepo;
-        this.notificationService = notificationService;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<StudentProfileDTO> getAllStudents() {
@@ -96,11 +98,11 @@ public class StudentService {
     public StudentProfileDTO addStudent(Student student) {
         StudentProfile studentProfile = student.getProfile();
         if (studentProfile != null) {
-            notificationService.Notify("Profile created for id:"+student.getStudentId());
             studentProfile.setStudent(student);
             student.setProfile(studentProfile);
         }
         Student savedStudent = studentRepo.save(student);
+        eventPublisher.publishEvent(new StudentCreatedEvent(savedStudent.getStudentId()));
         return convertToStudentDTO(savedStudent);
     }
 
@@ -112,4 +114,5 @@ public class StudentService {
                 .orElseThrow(() -> new StudentNotFoundException("Student with id:" + id + " not found"));
         studentRepo.delete(student);
     }
+
 }
