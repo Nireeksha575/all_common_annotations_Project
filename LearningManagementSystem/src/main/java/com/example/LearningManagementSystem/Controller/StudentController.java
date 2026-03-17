@@ -2,6 +2,7 @@ package com.example.LearningManagementSystem.Controller;
 
 import com.example.LearningManagementSystem.DTO.StudentProfileDTO;
 import com.example.LearningManagementSystem.Entity.Student;
+import com.example.LearningManagementSystem.Service.CacheInspectionService;
 import com.example.LearningManagementSystem.Service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,11 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService service;
+    private final CacheInspectionService inspectionService;
 
-    public StudentController(StudentService service) {
+    public StudentController(StudentService service, CacheInspectionService inspectionService) {
         this.service = service;
+        this.inspectionService = inspectionService;
     }
 
     @GetMapping
@@ -44,5 +47,15 @@ public class StudentController {
         service.updateStudent(id, student);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("updated student with id:" + id);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentProfileDTO> getStudentById(@PathVariable int id){
+        return ResponseEntity.ok(service.getStudentById(id));
+    }
+
+    @GetMapping("/Cache")
+    public void getCache(){
+        inspectionService.printCache("Students");
     }
 }

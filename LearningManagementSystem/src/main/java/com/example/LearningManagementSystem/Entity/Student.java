@@ -1,6 +1,7 @@
 package com.example.LearningManagementSystem.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Student {
@@ -14,7 +15,7 @@ public class Student {
     private String email;
 
     private String password;
-
+    @Pattern(regexp = "\\d{10}", message = "Phone number must be 10 digits")
     private String phoneNumber;
 
     @OneToOne(mappedBy = "student",cascade = CascadeType.ALL)
