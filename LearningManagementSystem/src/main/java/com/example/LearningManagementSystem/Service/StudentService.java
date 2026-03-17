@@ -52,7 +52,7 @@ public class StudentService {
     }
 
     @Transactional
-    @CachePut(value = "Students",key = "#id")
+    @CacheEvict(value = "Students",key = "#id")
     public StudentProfileDTO updateStudent(long id, Student updateStudent) {
         var student = studentRepo.findById(id)
                 .orElseThrow(() -> new StudentNotFoundException("Student with id:" + id + " not found"));
