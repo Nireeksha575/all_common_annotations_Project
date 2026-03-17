@@ -66,4 +66,18 @@ public class StudentProfileDTO {
     public void setEducation(String education) {
         this.education = education;
     }
+
+    @Override
+    public String toString() {
+        return "StudentProfileDTO{" +
+                "studentId=" + studentId +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", education='" + education + '\'' +
+                '}';
+    }
+
 }
